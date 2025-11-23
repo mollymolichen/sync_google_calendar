@@ -58,16 +58,21 @@ class CalendarSyncServicer(calendar_pb2_grpc.CalendarSyncServicer):
 
     def CreateEvent(self, request, context):
         session = Session()
+        # auth
         u = session.query(UserCalendar).filter_by(user_id=request.user_id).first()
         if not u or u.opted_out:
             context.abort(grpc.StatusCode.FAILED_PRECONDITION, "user not synced or opted out")
+
         svc = build_service_from_tokens(u.access_token, u.refresh_token, u.token_expiry, CLIENT_ID, CLIENT_SECRET)
+
+        # new event object
         event_body = {
+            "user_id": request.user_id,
             "summary": request.title,
             "description": request.description,
             "start": {"dateTime": request.start_iso},
             "end": {"dateTime": request.end_iso},
-            "extendedProperties": {"private": {"event_type": request.event_type}}
+            "extendedProperties": {"private": {"event_type": request.event_type}} # extendedProperties.private.event_type is used to persist your internal event type into the Google event so you can read it back later. Google’s event schema supports extendedProperties.
         }
         created = svc.events().insert(calendarId=request.calendar_id or u.calendar_id, body=event_body).execute()
         # return mapping

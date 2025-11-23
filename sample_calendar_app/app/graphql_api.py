@@ -7,6 +7,7 @@ from google_protos import calendar_pb2
 channel = grpc.insecure_channel("localhost:50051")
 client = CalendarSyncStub(channel)
 
+'''Event Type'''
 @strawberry.type
 class Event:
     id: str
@@ -16,6 +17,7 @@ class Event:
     end: str
     event_type: str
 
+'''Queries for Events'''
 @strawberry.type
 class Query:
     @strawberry.field
@@ -23,6 +25,7 @@ class Query:
         resp = client.ListEvents(calendar_pb2.ListEventsReq(user_id=user_id, time_min=(time_min or ""), time_max=(time_max or "")))
         return [Event(id=e.id, title=e.title, description=e.description, start=e.start, end=e.end, event_type=e.event_type) for e in resp.events]
 
+'''Mutations for Events'''
 @strawberry.type
 class Mutation:
     @strawberry.mutation
