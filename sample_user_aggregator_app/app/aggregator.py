@@ -15,6 +15,8 @@ class UserAggregatorService:
         self.profile_client = profile_client
         self.contacts_client = contacts_client
 
+    # Make async
+    # Centralize auth rather than passing the same auth token downstream to all 3 services
     def get_user_aggregate(self, user_id: str, auth_token: Optional[str] = None) -> Dict[str, Any]:
         """
         Sequentially fetches data from Identity, Profile, and Contacts services,
@@ -49,3 +51,4 @@ class UserAggregatorService:
         # Note: original design did NOT include phone number in GraphQL response.
         # If phone numbers live in contacts_data, we intentionally do not expose them further here.
         return aggregate
+    

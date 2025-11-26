@@ -45,6 +45,7 @@ def get_aggregate(user_id: str, request: Request):
     if auth_header:
         auth = auth_header.split(" ", 1)[-1]  # naive extraction
 
+    # Add more robust error handling
     try:
         agg = aggregator.get_user_aggregate(user_id, auth_token=auth)
         return agg

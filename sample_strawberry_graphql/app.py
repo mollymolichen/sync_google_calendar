@@ -4,7 +4,7 @@ import strawberry
 from typing import List, Optional
 from models import USERS, POSTS
 
-# --- GraphQL Types ---
+# --- GraphQL Object Types ---
 
 @strawberry.type
 class Post:
